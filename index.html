@@ -1,54 +1,19 @@
+<script src="teams.js"></script>
+<script src="glicko.js"></script>
+<script src="random.js"></script>
 <script>
-
-    // Making an International 2018 prediction based on glicko 2 ratings
-    // http://www.glicko.net/glicko/glicko2.pdf
-
-class Team {
-    // u and t are glicko 2 mu and theta respectively.
-    constructor(name, u, t){
-        this.name = name;
-        this.u = u;
-        this.t = t;
-    }
-}
-
-const TEAMS = {
-    IG: new Team("IG", 1871.13,	52.37),
-    LGD: new Team("LGD", 2063.87, 47.05),
-    EG: new Team("EG",1985.56,	45.36 ),
-    TL: new Team("TL", 2068.20,	49.57),
-    FNC: new Team("FNC", 1934.61, 43.17),
-    MSK: new Team("Mineski", 1963.11, 48.44),
-    OG: new Team("OG", 1946.57, 48.84),
-    VGJT: new Team("VGJ.T",1906.27, 51.34 ),
-    WST: new Team("Winstrike", 1951.62, 59.34	),
-
-    PAIN: new Team("paiN",1812.34, 47.48 ),
-    VG: new Team("Vici Gaming", 1982.41, 48.57),
-    NB: new Team("Newbee",1962.86, 48.38 ),
-    TS: new Team("Team Secret", 2012.08, 49.87),
-    VP: new Team("VP", 2078.50, 49.22),
-    TNC: new Team("TNC",1946.03, 46.67 ),
-    OPTIC: new Team("Optic",1937.69, 42.36 ),
-    // Serenity is not in datdota, but they beat IG so I'm going to take the team right above IG's stats.
-    SERENITY: new Team("Team Serenity", 1906.27, 51.34), 
-    VGJS: new Team("VGJ Storm", 2010.48, 47.36),
-}
-
-function g(t) {
-    return 1/(Math.sqrt(1+3*(Math.pow(t, 2))/Math.pow(3.14159, 2)));
-}
-
-// Expected win for team with u0 versus team with u1 and t1
-function e(u0, u1, t1) {
-    return 1/(1+Math.pow(2.718281, -1*g(t1)*(u0 - u1)));
-}
+// Making an International 2018 prediction based on glicko 2 ratings
 
 function winChance(team1, team2) {
     return e(team1.u, team2.u, team2.t);
 }
 
+const random = new Random();
+
 console.log("hi");
 console.log(`VP's chance against OG is: ${winChance(TEAMS.VP, TEAMS.OG)}`);
+
+console.log(`and they ${random.next() <= winChance(TEAMS.VP, TEAMS.OG) ? 'did!' : 'did not!'}`);
 </script>
 Hello World
+
