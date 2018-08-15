@@ -14,7 +14,9 @@ function winChance(team1, team2) {
     return e(team1.u, team2.u, team2.t);
 }
 
-const random = new Random();
+function runIt(seed) {
+
+const random = new Random(seed);
 
 console.log("hi");
 console.log(`VP's chance against OG is: ${winChance(TEAMS["VP"], TEAMS["OG"])*100}%`);
@@ -31,12 +33,228 @@ const g2Results = g2.runGroup();
 console.log(g1Results.map(a => `${a.name}: ${a.points}`));
 console.log(g2Results.map(a => `${a.name}: ${a.points}`));
 
+for (let i=0;i<g1Results.length;i++) {
+    document.getElementById(`groupAteam${i}`).textContent = g1Results[i].name;
+    document.getElementById(`groupAteam${i}points`).textContent = g1Results[i].points;
+}
+for (let i=0;i<g2Results.length;i++) {
+    document.getElementById(`groupBteam${i}`).textContent = g2Results[i].name;
+    document.getElementById(`groupBteam${i}points`).textContent = g2Results[i].points;
+}
+
 console.log(`${g1Results.slice(-1)[0].name} was eliminated`);
 console.log(`${g2Results.slice(-1)[0].name} was eliminated`);
 
 const mainEvent = new MainEvent(groupA, groupB, random);
 mainEvent.runEvent();
+};
 
+window.onload = () => runIt(1);
 </script>
-Hello World
+<!--
+ Tournament html style from:
+ https://codepen.io/semibran/pen/VjmPJd
+-->
 
+<head>
+<link rel="stylesheet" href="styles.css">
+</head>
+
+Seed:
+<input id="seed">
+<button onclick="runIt(document.getElementById('seed').value)">Run it</button>
+
+<div>
+<div>Group A</div>
+<table><tbody>
+    <tr>
+        <td>Standings</td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td style="background:green"></td>
+        <td id="groupAteam0"></td>
+        <td id="groupAteam0points"></td>
+    </tr>
+    <tr>
+        <td style="background:green"></td>
+        <td id="groupAteam1"></td>
+        <td id="groupAteam1points"></td>
+    </tr>
+    <tr>
+        <td style="background:green"></td>
+        <td id="groupAteam2"></td>
+        <td id="groupAteam2points"></td>
+    </tr>
+    <tr>
+        <td style="background:green"></td>
+        <td id="groupAteam3"></td>
+        <td id="groupAteam3points"></td>
+    </tr>
+    <tr>
+        <td style="background:orange"></td>
+        <td id="groupAteam4"></td>
+        <td id="groupAteam4points"></td>
+    </tr>
+    <tr>
+        <td style="background:orange"></td>
+        <td id="groupAteam5"></td>
+        <td id="groupAteam5points"></td>
+    </tr>
+    <tr>
+        <td style="background:orange"></td>
+        <td id="groupAteam6"></td>
+        <td id="groupAteam6points"></td>
+    </tr>
+    <tr>
+        <td style="background:orange"></td>
+        <td id="groupAteam7"></td>
+        <td id="groupAteam7points"></td>
+    </tr>
+    <tr>
+        <td style="background:red"></td>
+        <td id="groupAteam8"></td>
+        <td id="groupAteam8points"></td>
+    </tr>
+</tbody></table>
+<div></div>
+
+    Group B</div>
+<table>
+    <tbody>
+        <tr>
+            <td>Standings</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td style="background:green"></td>
+            <td id="groupBteam0"></td>
+            <td id="groupBteam0points"></td>
+        </tr>
+        <tr>
+            <td style="background:green"></td>
+            <td id="groupBteam1"></td>
+            <td id="groupBteam1points"></td>
+        </tr>
+        <tr>
+            <td style="background:green"></td>
+            <td id="groupBteam2"></td>
+            <td id="groupBteam2points"></td>
+        </tr>
+        <tr>
+            <td style="background:green"></td>
+            <td id="groupBteam3"></td>
+            <td id="groupBteam3points"></td>
+        </tr>
+        <tr>
+            <td style="background:orange"></td>
+            <td id="groupBteam4"></td>
+            <td id="groupBteam4points"></td>
+        </tr>
+        <tr>
+            <td style="background:orange"></td>
+            <td id="groupBteam5"></td>
+            <td id="groupBteam5points"></td>
+        </tr>
+        <tr>
+            <td style="background:orange"></td>
+            <td id="groupBteam6"></td>
+            <td id="groupBteam6points"></td>
+        </tr>
+        <tr>
+            <td style="background:orange"></td>
+            <td id="groupBteam7"></td>
+            <td id="groupBteam7points"></td>
+        </tr>
+        <tr>
+            <td style="background:red"></td>
+            <td id="groupBteam8"></td>
+            <td id="groupBteam8points"></td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<!-- 
+<div>
+<div class="bracket">
+    <section class="round quarterfinals">
+      <div class="winners">
+        <div class="matchups">
+          <div class="matchup">
+            <div class="participants">
+              <div class="participant winner"><span>Uno</span></div>
+              <div class="participant"><span>Ocho</span></div>
+            </div>
+          </div>
+          <div class="matchup">
+            <div class="participants">
+              <div class="participant"><span>Dos</span></div>
+              <div class="participant winner"><span>Siete</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="connector">
+          <div class="merger"></div>
+          <div class="line"></div>
+        </div>
+      </div>
+      <div class="winners">
+        <div class="matchups">
+          <div class="matchup">
+            <div class="participants">
+              <div class="participant"><span>Treis</span></div>
+              <div class="participant winner"><span>Seis</span></div>
+            </div>
+          </div>
+          <div class="matchup">
+            <div class="participants">
+              <div class="participant"><span>Cuatro</span></div>
+              <div class="participant winner"><span>Cinco</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="connector">
+          <div class="merger"></div>
+          <div class="line"></div>
+        </div>
+      </div>
+    </section>
+    <section class="round semifinals">
+      <div class="winners">
+        <div class="matchups">
+          <div class="matchup">
+            <div class="participants">
+              <div class="participant winner"><span>Uno</span></div>
+              <div class="participant"><span>Dos</span></div>
+            </div>
+          </div>
+          <div class="matchup">
+            <div class="participants">
+              <div class="participant winner"><span>Seis</span></div>
+              <div class="participant"><span>Cinco</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="connector">
+          <div class="merger"></div>
+          <div class="line"></div>
+        </div>
+      </div>
+    </section>
+    <section class="round finals">
+      <div class="winners">
+        <div class="matchups">
+          <div class="matchup">
+            <div class="participants">
+              <div class="participant winner"><span>Uno</span></div>
+              <div class="participant"><span>Seis</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+ -->
