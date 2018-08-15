@@ -25,3 +25,12 @@ function determineWinner(results) {
         };
     }).sort((a, b) => a.points < b.points)[0].name;
 }
+
+function determineLoser(results) {
+    return Object.keys(results).map((key) => {
+        return {
+            name: key,
+            points: results[key]
+        };
+    }).sort((a, b) => a.points >= b.points)[0].name;
+}
