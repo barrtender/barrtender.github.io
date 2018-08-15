@@ -42,6 +42,7 @@ console.log(`${g2Results.slice(-1)[0].name} was eliminated`);
 
 const mainEvent = new MainEvent(groupA, groupB, random);
 const mainEventResults = mainEvent.runEvent();
+console.log(JSON.stringify(mainEventResults));
 const winnerName = determineWinner(mainEventResults.slice(-1)[0]);
 document.getElementById('winner').textContent = `${winnerName} wins TI8`;
 
@@ -54,6 +55,7 @@ for (var i=0;i<mainEventResults.length;i++){
     setNameAndWinner(`game${i}team2`, team2, result[team2], !team1Wins);
 }
 
+return winnerName;
 };
 
 function setNameAndWinner(id, name, points, winner) {
@@ -68,9 +70,9 @@ function setNameAndWinner(id, name, points, winner) {
 window.onload = () => {
     var search = window.location.search
     var seed = search.indexOf("seed=") > 0 ? search.slice(search.indexOf("seed=")+5, search.length) : 1;
-
     document.getElementById('seed').value = seed;
     runIt(seed);
+
 };
 </script>
 <!--

@@ -68,7 +68,7 @@ class MainEvent {
         this.gameResults.push(playGames(5, TEAMS[determineWinner(this.gameResults[19])],
                               TEAMS[determineWinner(this.gameResults[20])], this.randomizer));
 
-        console.log(JSON.stringify(this.gameResults));
+        //console.log(JSON.stringify(this.gameResults));
 
         return this.gameResults;
     }
