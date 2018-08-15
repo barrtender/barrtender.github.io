@@ -18,8 +18,8 @@ console.log("hi");
 console.log(`VP's chance against OG is: ${winChance(TEAMS["VP"], TEAMS["OG"])*100}%`);
 
 console.log(`and they ${winChance(TEAMS["VP"], TEAMS["OG"]) >= random.next() ? 'did!' : 'did not!'}`);
-console.log(`vp vs og = ${playGame(TEAMS["VP"], TEAMS["OG"], random).name}`);
-console.log(`vp vs og bo2 = ${playBO2(TEAMS["VP"], TEAMS["OG"], random)}`);
+console.log(`vp vs og = ${determineWinner(playGames(1, TEAMS["VP"], TEAMS["OG"], random))}`);
+console.log(`vp vs og bo2 = ${JSON.stringify(playGames(2, TEAMS["VP"], TEAMS["OG"], random))}`);
 
 const g1 = new Groups(groupA, random);
 const g2 = new Groups(groupB, random);
