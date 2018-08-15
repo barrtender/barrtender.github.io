@@ -18,20 +18,10 @@ function runIt(seed) {
 
 const random = new Random(seed);
 
-console.log("hi");
-console.log(`VP's chance against OG is: ${winChance(TEAMS["VP"], TEAMS["OG"])*100}%`);
-
-console.log(`and they ${winChance(TEAMS["VP"], TEAMS["OG"]) >= random.next() ? 'did!' : 'did not!'}`);
-console.log(`vp vs og = ${determineWinner(playGames(1, TEAMS["VP"], TEAMS["OG"], random))}`);
-console.log(`vp vs og bo2 = ${JSON.stringify(playGames(2, TEAMS["VP"], TEAMS["OG"], random))}`);
-
 const g1 = new Groups(groupA, random);
 const g2 = new Groups(groupB, random);
 const g1Results = g1.runGroup();
 const g2Results = g2.runGroup();
-
-console.log(g1Results.map(a => `${a.name}: ${a.points}`));
-console.log(g2Results.map(a => `${a.name}: ${a.points}`));
 
 for (let i=0;i<g1Results.length;i++) {
     document.getElementById(`groupAteam${i}`).textContent = g1Results[i].name;
@@ -42,11 +32,19 @@ for (let i=0;i<g2Results.length;i++) {
     document.getElementById(`groupBteam${i}points`).textContent = g2Results[i].points;
 }
 
+console.log("Group A results:");
+console.log(g1Results.map(a => `${a.name}: ${a.points}`));
+console.log("Group B results:");
+console.log(g2Results.map(a => `${a.name}: ${a.points}`));
+
 console.log(`${g1Results.slice(-1)[0].name} was eliminated`);
 console.log(`${g2Results.slice(-1)[0].name} was eliminated`);
 
 const mainEvent = new MainEvent(groupA, groupB, random);
-mainEvent.runEvent();
+const mainEventResults = mainEvent.runEvent();
+const winnerName = determineWinner(mainEventResults.slice(-1)[0]);
+document.getElementById('winner').textContent = `${winnerName} wins TI8`;
+
 };
 
 window.onload = () => runIt(1);
@@ -63,6 +61,7 @@ window.onload = () => runIt(1);
 Seed:
 <input id="seed">
 <button onclick="runIt(document.getElementById('seed').value)">Run it</button>
+<h1 id="winner"></h1>
 
 <div>
 <div>Group A</div>

@@ -12,7 +12,11 @@ function playGames(numGames, team1, team2, randomizer) {
     results[team1.name]=0;
     results[team2.name]=0;
     for (let i=0;i<numGames;i++) {
+        if (results)
         results[playGame(team1, team2, randomizer).name]++;
+        if (results[team1.name] > numGames/2 || results[team2.name] > numGames/2) {
+            break;
+        }
     }
     return results;
 }
