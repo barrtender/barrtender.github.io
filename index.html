@@ -5,6 +5,8 @@
 <script src="playGame.js"></script>
 <!-- groups depends on playGame -->
 <script src="groups.js"></script>
+<!-- mainEvent depeonds on playGame and teams -->
+<script src="mainEvent.js"></script>
 <script>
 // Making an International 2018 prediction based on glicko 2 ratings
 
@@ -32,7 +34,8 @@ console.log(g2Results.map(a => `${a.name}: ${a.points}`));
 console.log(`${g1Results.slice(-1)[0].name} was eliminated`);
 console.log(`${g2Results.slice(-1)[0].name} was eliminated`);
 
-
+const mainEvent = new MainEvent(groupA, groupB, random);
+mainEvent.runEvent();
 
 </script>
 Hello World
