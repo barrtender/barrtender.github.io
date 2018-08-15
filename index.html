@@ -65,7 +65,13 @@ function setNameAndWinner(id, name, points, winner) {
 
 }
 
-window.onload = () => runIt(1);
+window.onload = () => {
+    var search = window.location.search
+    var seed = search.indexOf("seed=") > 0 ? search.slice(search.indexOf("seed=")+5, search.length) : 1;
+
+    document.getElementById('seed').value = seed;
+    runIt(seed);
+};
 </script>
 <!--
  Tournament html style from:
