@@ -19,6 +19,11 @@ class Groups {
                 this.results[teamj.name] += bo2Result[teamj.name];
             }
         }
-        return this.results;
+        return  Object.keys(this.results).map((teamName) => {
+            return {
+                name: teamName,
+                points: this.results[teamName]
+            };
+        }).sort((a, b) => a.points < b.points);
     }
 }

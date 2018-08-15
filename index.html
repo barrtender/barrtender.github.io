@@ -15,7 +15,7 @@ function winChance(team1, team2) {
 const random = new Random();
 
 console.log("hi");
-console.log(`VP's chance against OG is: ${winChance(TEAMS["VP"], TEAMS["OG"])}`);
+console.log(`VP's chance against OG is: ${winChance(TEAMS["VP"], TEAMS["OG"])*100}%`);
 
 console.log(`and they ${winChance(TEAMS["VP"], TEAMS["OG"]) >= random.next() ? 'did!' : 'did not!'}`);
 console.log(`vp vs og = ${playGame(TEAMS["VP"], TEAMS["OG"], random).name}`);
@@ -26,24 +26,11 @@ const g2 = new Groups(groupB, random);
 const g1Results = g1.runGroup();
 const g2Results = g2.runGroup();
 
-const g1ResultsList = Object.keys(g1Results).map((teamName) => {
-    return {
-        name: teamName,
-        points: g1Results[teamName]
-    };
-}).sort((a, b) => a.points < b.points);
-const g2ResultsList = Object.keys(g2Results).map((teamName) => {
-    return {
-        name: teamName,
-        points: g2Results[teamName]
-    };
-}).sort((a, b) => a.points < b.points);
+console.log(g1Results.map(a => `${a.name}: ${a.points}`));
+console.log(g2Results.map(a => `${a.name}: ${a.points}`));
 
-console.log(g1ResultsList.map(a => `${a.name}: ${a.points}`));
-console.log(g2ResultsList.map(a => `${a.name}: ${a.points}`));
-
-console.log(`${g1ResultsList.slice(-1)[0].name} was eliminated`);
-console.log(`${g2ResultsList.slice(-1)[0].name} was eliminated`);
+console.log(`${g1Results.slice(-1)[0].name} was eliminated`);
+console.log(`${g2Results.slice(-1)[0].name} was eliminated`);
 
 
 
