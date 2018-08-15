@@ -10,14 +10,15 @@ class Groups {
             this.results[team.name] = 0;
         }
         for (let i=0; i<this.teams.length-1; i++) {
+            const teami = this.teams[i];
             for (let j=i+1; j<this.teams.length; j++) {
-                const bo2Result = playBO2(this.teams[i], this.teams[j], this.randomizer);
-                console.log(`${this.teams[i]} faced ${this.teams[j]} and the result was:`);
-                for (let teamResult of bo2Result) {
-                    console.log(`${teamResult} won`);
-                    this.results[teamResult] += bo2Result[teamResult];
-                }
+                const teamj = this.teams[j];
+                const bo2Result = playBO2(teami, teamj, this.randomizer);
+                console.log(`${teami.name} faced ${teamj.name} and the result was: ${bo2Result[teami.name]} - ${bo2Result[teamj.name]}`);
+                this.results[teami.name] += bo2Result[teami.name];
+                this.results[teamj.name] += bo2Result[teamj.name];
             }
         }
+        return this.results;
     }
 }
