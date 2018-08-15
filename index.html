@@ -1,6 +1,10 @@
 <script src="teams.js"></script>
 <script src="glicko.js"></script>
 <script src="random.js"></script>
+<!-- playGame depends on glicko -->
+<script src="playGame.js"></script>
+<!-- groups depends on playGame -->
+<script src="groups.js"></script>
 <script>
 // Making an International 2018 prediction based on glicko 2 ratings
 
@@ -13,7 +17,18 @@ const random = new Random();
 console.log("hi");
 console.log(`VP's chance against OG is: ${winChance(TEAMS.VP, TEAMS.OG)}`);
 
-console.log(`and they ${random.next() <= winChance(TEAMS.VP, TEAMS.OG) ? 'did!' : 'did not!'}`);
+console.log(`and they ${winChance(TEAMS.VP, TEAMS.OG) >= random.next() ? 'did!' : 'did not!'}`);
+console.log(`vp vs og = ${playGame(TEAMS.VP, TEAMS.OG, random).name}`);
+
+console.log(`vp vs og bo2 = ${playBO2(TEAMS.VP, TEAMS.OG, random)}`);
+
+const groupA = [TEAMS.IG, TEAMS.LGD, TEAMS.EG, TEAMS.TL, TEAMS.FNC, TEAMS.MSKI, TEAMS.OG, TEAMS.VGJT, TEAMS.WST];
+
+const groupB = [TEAMS.PAIN,TEAMS.VG,TEAMS.NB,TEAMS.TS,TEAMS.VP,TEAMS.TNC,TEAMS.OPTIC,TEAMS.SERENITY,TEAMS.VGJS];
+
+const g1 = new Groups(groupA, random);
+g1.runGroup();
+
 </script>
 Hello World
 
