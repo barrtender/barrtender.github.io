@@ -40,7 +40,10 @@ console.log(g2Results.map(a => `${a.name}: ${a.points}`));
 console.log(`${g1Results.slice(-1)[0].name} was eliminated`);
 console.log(`${g2Results.slice(-1)[0].name} was eliminated`);
 
-const mainEvent = new MainEvent(groupA, groupB, random);
+const groupARemainders = g1Results.map((groupResult) => TEAMS[groupResult.name]);
+const groupBRemainders = g2Results.map((groupResult) => TEAMS[groupResult.name]);
+
+const mainEvent = new MainEvent(groupARemainders, groupBRemainders, random);
 const mainEventResults = mainEvent.runEvent();
 console.log(JSON.stringify(mainEventResults));
 const winnerName = determineWinner(mainEventResults.slice(-1)[0]);
