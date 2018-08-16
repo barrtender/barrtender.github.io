@@ -9,17 +9,17 @@ class MainEvent {
 
     runEvent() {
         // Column 1
-        this.gameResults.push(playGames(1, groupA[4], groupB[7], this.randomizer));
-        this.gameResults.push(playGames(1, groupB[5], groupA[6], this.randomizer));
-        this.gameResults.push(playGames(1, groupB[4], groupA[7], this.randomizer));
-        this.gameResults.push(playGames(1, groupA[5], groupB[6], this.randomizer));
-        
+        this.gameResults.push(playGames(1, this.groupA[4], this.groupB[7], this.randomizer));
+        this.gameResults.push(playGames(1, this.groupB[5], this.groupA[6], this.randomizer));
+        this.gameResults.push(playGames(1, this.groupB[4], this.groupA[7], this.randomizer));
+        this.gameResults.push(playGames(1, this.groupA[5], this.groupB[6], this.randomizer));
+
         // Column 2
         // Upper bracket
-        this.gameResults.push(playGames(3, groupA[0], groupB[3], this.randomizer));
-        this.gameResults.push(playGames(3, groupB[1], groupA[2], this.randomizer));
-        this.gameResults.push(playGames(3, groupB[0], groupA[3], this.randomizer));
-        this.gameResults.push(playGames(3, groupA[1], groupB[2], this.randomizer));
+        this.gameResults.push(playGames(3, this.groupA[0], this.groupB[3], this.randomizer));
+        this.gameResults.push(playGames(3, this.groupB[1], this.groupA[2], this.randomizer));
+        this.gameResults.push(playGames(3, this.groupB[0], this.groupA[3], this.randomizer));
+        this.gameResults.push(playGames(3, this.groupA[1], this.groupB[2], this.randomizer));
 
         // Lower bracket
         this.gameResults.push(playGames(3, TEAMS[determineWinner(this.gameResults[0])], 
