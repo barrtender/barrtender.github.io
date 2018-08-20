@@ -8,95 +8,113 @@
 <!-- mainEvent depeonds on playGame and teams -->
 <script src="mainEvent.js"></script>
 <script>
-// Making an International 2018 prediction based on glicko 2 ratings
+    // Making an International 2018 prediction based on glicko 2 ratings
 
-function winChance(team1, team2) {
-    return e(team1.u, team2.u, team2.t);
-}
-
-function runIt(seed) {
-
-const random = new Random(seed);
-
-const g1 = new Groups(groupA, random);
-const g2 = new Groups(groupB, random);
-const g1Results = g1.runGroup();
-const g2Results = g2.runGroup();
-
-for (let i=0;i<g1Results.length;i++) {
-    document.getElementById(`groupAteam${i}`).textContent = g1Results[i].name;
-    document.getElementById(`groupAteam${i}points`).textContent = g1Results[i].points;
-}
-for (let i=0;i<g2Results.length;i++) {
-    document.getElementById(`groupBteam${i}`).textContent = g2Results[i].name;
-    document.getElementById(`groupBteam${i}points`).textContent = g2Results[i].points;
-}
-
-console.log("Group A results:");
-console.log(g1Results.map(a => `${a.name}: ${a.points}`));
-console.log("Group B results:");
-console.log(g2Results.map(a => `${a.name}: ${a.points}`));
-
-console.log(`${g1Results.slice(-1)[0].name} was eliminated`);
-console.log(`${g2Results.slice(-1)[0].name} was eliminated`);
-
-const groupARemainders = g1Results.map((groupResult) => TEAMS[groupResult.name]);
-const groupBRemainders = g2Results.map((groupResult) => TEAMS[groupResult.name]);
-
-const mainEvent = new MainEvent(groupARemainders, groupBRemainders, random);
-const mainEventResults = mainEvent.runEvent();
-console.log(JSON.stringify(mainEventResults));
-const winnerName = determineWinner(mainEventResults.slice(-1)[0]);
-document.getElementById('winner').textContent = `${winnerName} wins TI8`;
-
-for (var i=0;i<mainEventResults.length;i++){
-    const result = mainEventResults[i];
-    const team1 = Object.keys(result)[0];
-    const team2 = Object.keys(result)[1];
-    const team1Wins = determineWinner(result) === team1;
-    setNameAndWinner(`game${i}team1`, team1, result[team1], team1Wins);
-    setNameAndWinner(`game${i}team2`, team2, result[team2], !team1Wins);
-}
-
-return winnerName;
-};
-
-function setNameAndWinner(id, name, points, winner) {
-    const div = document.getElementById(id)
-    div.children[0].textContent = `${points} ${name}`;
-    if (winner) {
-        div.className = "participant winner";
-    } else {
-        div.className = "participant";
+    function winChance(team1, team2) {
+        return e(team1.u, team2.u, team2.t);
     }
-}
 
-function reroll() {
-    document.getElementById('seed').value = Math.floor(Math.random()*100000);
-    runIt(document.getElementById('seed').value);
-}
+    let g1Results = [];
+    let g2Results = [];
 
-window.onload = () => {
-    var searchParams = new URLSearchParams(window.location.search);
-    var seed = searchParams.get("seed");
-    if (!seed) {
-        seed = Math.floor(Math.random()*100000);
-        searchParams.set("seed", seed);
-        window.location.search = searchParams.toString();
+    let random = new Random(1);
+
+    function runIt(randomizer) {
+        runGroupStages(randomizer);
+        runMainEvent(randomizer);
     }
-    
-    document.getElementById('seed').value = seed;
-    runIt(seed);
+
+    function runGroupStages(randomizer) {
+        const g1 = new Groups(groupA, randomizer);
+        const g2 = new Groups(groupB, randomizer);
+        g1Results = g1.runGroup();
+        g2Results = g2.runGroup();
+        const groupARemainders = g1Results.map((groupResult) => TEAMS[groupResult.name]);
+        const groupBRemainders = g2Results.map((groupResult) => TEAMS[groupResult.name]);
 
 
-    // var winners = {};
-    // for(var i=0;i<5000;i++){ 
-    //     const winner = runIt(i);
-    //     winners[winner] = winners[winner] + 1 || 1 ;
-    // }
+        printGroupResults(g1Results, g2Results);
 
-    // console.log(winners);
-};
+        return {
+            groupARemainders, groupBRemainders
+        }
+    }
+
+    function printGroupResults(g1Results, g2Results) {
+        for (let i = 0; i < g1Results.length; i++) {
+            document.getElementById(`groupAteam${i}`).textContent = g1Results[i].name;
+            document.getElementById(`groupAteam${i}points`).textContent = g1Results[i].points;
+        }
+        for (let i = 0; i < g2Results.length; i++) {
+            document.getElementById(`groupBteam${i}`).textContent = g2Results[i].name;
+            document.getElementById(`groupBteam${i}points`).textContent = g2Results[i].points;
+        }
+
+        console.log("Group A results:");
+        console.log(g1Results.map(a => `${a.name}: ${a.points}`));
+        console.log("Group B results:");
+        console.log(g2Results.map(a => `${a.name}: ${a.points}`));
+
+        console.log(`${g1Results.slice(-1)[0].name} was eliminated`);
+        console.log(`${g2Results.slice(-1)[0].name} was eliminated`);
+    }
+
+    function runMainEvent(randomizer) {
+
+        const mainEvent = new MainEvent(groupA, groupB, randomizer);
+        const mainEventResults = mainEvent.runEvent();
+        console.log(JSON.stringify(mainEventResults));
+        const winnerName = determineWinner(mainEventResults.slice(-1)[0]);
+        document.getElementById('winner').textContent = `${winnerName} wins TI8`;
+
+        for (var i = 0; i < mainEventResults.length; i++) {
+            const result = mainEventResults[i];
+            const team1 = Object.keys(result)[0];
+            const team2 = Object.keys(result)[1];
+            const team1Wins = determineWinner(result) === team1;
+            setNameAndWinner(`game${i}team1`, team1, result[team1], team1Wins);
+            setNameAndWinner(`game${i}team2`, team2, result[team2], !team1Wins);
+        }
+
+        return winnerName;
+    };
+
+    function setNameAndWinner(id, name, points, winner) {
+        const div = document.getElementById(id)
+        div.children[0].textContent = `${points} ${name}`;
+        if (winner) {
+            div.className = "participant winner";
+        } else {
+            div.className = "participant";
+        }
+    }
+
+    function reroll() {
+        document.getElementById('seed').value = Math.floor(Math.random() * 100000);
+        runIt(new Random(document.getElementById('seed').value));
+    }
+
+    window.onload = () => {
+        var searchParams = new URLSearchParams(window.location.search);
+        var seed = searchParams.get("seed");
+        if (!seed) {
+            seed = Math.floor(Math.random() * 100000);
+            searchParams.set("seed", seed);
+            window.location.search = searchParams.toString();
+        }
+
+        document.getElementById('seed').value = seed;
+        runIt(new Random(seed));
+
+
+        // var winners = {};
+        // for(var i=0;i<5000;i++){ 
+        //     const winner = runIt(i);
+        //     winners[winner] = winners[winner] + 1 || 1 ;
+        // }
+
+        // console.log(winners);
+    };
 </script>
 <!--
  Tournament html style from:
@@ -104,7 +122,7 @@ window.onload = () => {
 -->
 
 <head>
-<link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 Seed:
@@ -114,62 +132,65 @@ Seed:
 <h1 id="winner"></h1>
 
 <div>
-<div>Group A</div>
-<table><tbody>
-    <tr>
-        <td>Standings</td>
-        <td></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td style="background:green"></td>
-        <td id="groupAteam0"></td>
-        <td id="groupAteam0points"></td>
-    </tr>
-    <tr>
-        <td style="background:green"></td>
-        <td id="groupAteam1"></td>
-        <td id="groupAteam1points"></td>
-    </tr>
-    <tr>
-        <td style="background:green"></td>
-        <td id="groupAteam2"></td>
-        <td id="groupAteam2points"></td>
-    </tr>
-    <tr>
-        <td style="background:green"></td>
-        <td id="groupAteam3"></td>
-        <td id="groupAteam3points"></td>
-    </tr>
-    <tr>
-        <td style="background:orange"></td>
-        <td id="groupAteam4"></td>
-        <td id="groupAteam4points"></td>
-    </tr>
-    <tr>
-        <td style="background:orange"></td>
-        <td id="groupAteam5"></td>
-        <td id="groupAteam5points"></td>
-    </tr>
-    <tr>
-        <td style="background:orange"></td>
-        <td id="groupAteam6"></td>
-        <td id="groupAteam6points"></td>
-    </tr>
-    <tr>
-        <td style="background:orange"></td>
-        <td id="groupAteam7"></td>
-        <td id="groupAteam7points"></td>
-    </tr>
-    <tr>
-        <td style="background:red"></td>
-        <td id="groupAteam8"></td>
-        <td id="groupAteam8points"></td>
-    </tr>
-</tbody></table>
-<div></div>
+    <div>Group A</div>
+    <table>
+        <tbody>
+            <tr>
+                <td>Standings</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td style="background:green"></td>
+                <td id="groupAteam0"></td>
+                <td id="groupAteam0points"></td>
+            </tr>
+            <tr>
+                <td style="background:green"></td>
+                <td id="groupAteam1"></td>
+                <td id="groupAteam1points"></td>
+            </tr>
+            <tr>
+                <td style="background:green"></td>
+                <td id="groupAteam2"></td>
+                <td id="groupAteam2points"></td>
+            </tr>
+            <tr>
+                <td style="background:green"></td>
+                <td id="groupAteam3"></td>
+                <td id="groupAteam3points"></td>
+            </tr>
+            <tr>
+                <td style="background:orange"></td>
+                <td id="groupAteam4"></td>
+                <td id="groupAteam4points"></td>
+            </tr>
+            <tr>
+                <td style="background:orange"></td>
+                <td id="groupAteam5"></td>
+                <td id="groupAteam5points"></td>
+            </tr>
+            <tr>
+                <td style="background:orange"></td>
+                <td id="groupAteam6"></td>
+                <td id="groupAteam6points"></td>
+            </tr>
+            <tr>
+                <td style="background:orange"></td>
+                <td id="groupAteam7"></td>
+                <td id="groupAteam7points"></td>
+            </tr>
+            <tr>
+                <td style="background:red"></td>
+                <td id="groupAteam8"></td>
+                <td id="groupAteam8points"></td>
+            </tr>
+        </tbody>
+    </table>
+    <div></div>
 
-    Group B</div>
+    Group B
+</div>
 <table>
     <tbody>
         <tr>
@@ -227,251 +248,267 @@ Seed:
 </div>
 
 <div style="white-space:nowrap">
-<div style="display:inline-block">
-    <div class="upper bracket">
-        <section style="visibility: hidden; width:296px" class="hidden round quarterfinals"></section>
-        <section class="round quarterfinals">
-            <div class="winners">
-                <div class="matchups">
-                    <div class="matchup">
-                        <div class="participants">
-                            <div class="participant" id="game4team1"><span>Group A 1</span></div>
-                            <div class="participant" id="game4team2"><span>Group B 4</span></div>
+    <div style="display:inline-block">
+        <div class="upper bracket">
+            <section style="visibility: hidden; width:296px" class="hidden round quarterfinals"></section>
+            <section class="round quarterfinals">
+                <div class="winners">
+                    <div class="matchups">
+                        <div class="matchup">
+                            <div class="participants">
+                                <div class="participant" id="game4team1"><span>Group A 1</span></div>
+                                <div class="participant" id="game4team2"><span>Group B 4</span></div>
+                            </div>
+                        </div>
+                        <div class="matchup">
+                            <div class="participants">
+                                <div class="participant" id="game5team1"><span>Group B 2</span></div>
+                                <div class="participant" id="game5team2"><span>Group A 3</span></div>
+                            </div>
                         </div>
                     </div>
-                    <div class="matchup">
-                        <div class="participants">
-                            <div class="participant" id="game5team1"><span>Group B 2</span></div>
-                            <div class="participant" id="game5team2"><span>Group A 3</span></div>
+                    <div class="connector">
+                        <div class="merger"></div>
+                        <div class="line"></div>
+                    </div>
+                </div>
+                <div class="winners">
+                    <div class="matchups">
+                        <div class="matchup">
+                            <div class="participants">
+                                <div class="participant" id="game6team1"><span>Group B 1</span></div>
+                                <div class="participant" id="game6team2"><span>Group A 4</span></div>
+                            </div>
+                        </div>
+                        <div class="matchup">
+                            <div class="participants">
+                                <div class="participant" id="game7team1"><span>Group A 2</span></div>
+                                <div class="participant" id="game7team2"><span>Group B 3</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="connector">
+                        <div class="merger"></div>
+                        <div class="line"></div>
+                    </div>
+                </div>
+            </section>
+            <section style="visibility: hidden; width: 296px" class="hidden round quarterfinals"></section>
+            <section class="round semifinals">
+                <div class="winners">
+                    <div class="matchups">
+                        <div class="matchup">
+                            <div class="participants">
+                                <div class="participant" id="game14team1"><span></span></div>
+                                <div class="participant" id="game14team2"><span></span></div>
+                            </div>
+                        </div>
+                        <div class="matchup">
+                            <div class="participants">
+                                <div class="participant" id="game15team1"><span></span></div>
+                                <div class="participant" id="game15team2"><span></span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="connector">
+                        <div class="merger"></div>
+                        <div class="line"></div>
+                    </div>
+                </div>
+            </section>
+            <section style="visibility: hidden; width:296px" class="hidden round quarterfinals"></section>
+            <section class="round finals">
+                <div class="winners">
+                    <div class="matchups">
+                        <div class="matchup">
+                            <div class="participants">
+                                <div class="participant" id="game19team1"><span></span></div>
+                                <div class="participant" id="game19team2"><span></span></div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="connector">
-                    <div class="merger"></div>
-                    <div class="line"></div>
-                </div>
-            </div>
-            <div class="winners">
-                <div class="matchups">
-                    <div class="matchup">
-                        <div class="participants">
-                            <div class="participant" id="game6team1"><span>Group B 1</span></div>
-                            <div class="participant" id="game6team2"><span>Group A 4</span></div>
-                        </div>
-                    </div>
-                    <div class="matchup">
-                        <div class="participants">
-                            <div class="participant" id="game7team1"><span>Group A 2</span></div>
-                            <div class="participant" id="game7team2"><span>Group B 3</span></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="connector">
-                    <div class="merger"></div>
-                    <div class="line"></div>
-                </div>
-            </div>
-        </section>
-        <section style="visibility: hidden; width: 296px" class="hidden round quarterfinals"></section>
-        <section class="round semifinals">
-            <div class="winners">
-                <div class="matchups">
-                    <div class="matchup">
-                        <div class="participants">
-                            <div class="participant" id="game14team1"><span></span></div>
-                            <div class="participant" id="game14team2"><span></span></div>
-                        </div>
-                    </div>
-                    <div class="matchup">
-                        <div class="participants">
-                            <div class="participant" id="game15team1"><span></span></div>
-                            <div class="participant" id="game15team2"><span></span></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="connector">
-                    <div class="merger"></div>
-                    <div class="line"></div>
-                </div>
-            </div>
-        </section>
-        <section style="visibility: hidden; width:296px" class="hidden round quarterfinals"></section>
-        <section class="round finals">
-            <div class="winners">
-                <div class="matchups">
-                    <div class="matchup">
-                        <div class="participants">
-                            <div class="participant" id="game19team1"><span></span></div>
-                            <div class="participant" id="game19team2"><span></span></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </div>
+            </section>
+        </div>
 
-    <div class="lower bracket" style="padding-top: 10px">
-        <section class="round quarterfinals">
-            <div class="winners">
-                <div class="matchups">
-                    <div class="matchup">
-                        <div class="participants">
-                            <div class="participant" id="game0team1"><span></span></div>
-                            <div class="participant" id="game0team2"><span></span></div>
+        <div class="lower bracket" style="padding-top: 10px">
+            <section class="round quarterfinals">
+                <div class="winners">
+                    <div class="matchups">
+                        <div class="matchup">
+                            <div class="participants">
+                                <div class="participant" id="game0team1"><span></span></div>
+                                <div class="participant" id="game0team2"><span></span></div>
+                            </div>
+                        </div>
+                        <div class="matchup">
+                            <div class="participants">
+                                <div class="participant" id="game1team1"><span></span></div>
+                                <div class="participant" id="game1team2"><span></span></div>
+                            </div>
                         </div>
                     </div>
-                    <div class="matchup">
-                        <div class="participants">
-                            <div class="participant" id="game1team1"><span></span></div>
-                            <div class="participant" id="game1team2"><span></span></div>
+                    <div class="connector">
+                        <div class="merger"></div>
+                        <div class="line"></div>
+                    </div>
+                </div>
+                <div class="winners">
+                    <div class="matchups">
+                        <div class="matchup">
+                            <div class="participants">
+                                <div class="participant" id="game2team1"><span></span></div>
+                                <div class="participant" id="game2team2"><span></span></div>
+                            </div>
+                        </div>
+                        <div class="matchup">
+                            <div class="participants">
+                                <div class="participant" id="game3team1"><span></span></div>
+                                <div class="participant" id="game3team2"><span></span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="connector">
+                        <div class="merger"></div>
+                        <div class="line"></div>
+                    </div>
+                </div>
+            </section>
+            <section class="round quarterfinals">
+                <div class="winners">
+                    <div class="matchups">
+                        <div class="matchup">
+                            <div class="participants">
+                                <div class="participant" id="game8team1"><span></span></div>
+                                <div class="participant" id="game8team2"><span></span></div>
+                            </div>
+                        </div>
+                        <div class="matchup">
+                            <div class="participants">
+                                <div class="participant" id="game9team1"><span></span></div>
+                                <div class="participant" id="game9team2"><span></span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="connector">
+                        <div class="merger"></div>
+                        <div class="line"></div>
+                    </div>
+                </div>
+                <div class="winners">
+                    <div class="matchups">
+                        <div class="matchup">
+                            <div class="participants">
+                                <div class="participant" id="game10team1"><span></span></div>
+                                <div class="participant" id="game10team2"><span></span></div>
+                            </div>
+                        </div>
+                        <div class="matchup">
+                            <div class="participants">
+                                <div class="participant" id="game11team1"><span></span></div>
+                                <div class="participant" id="game11team2"><span></span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="connector">
+                        <div class="merger"></div>
+                        <div class="line"></div>
+                    </div>
+                </div>
+            </section>
+            <section class="round semifinals">
+                <div class="winners">
+                    <div class="matchups">
+                        <div class="matchup">
+                            <div class="participants">
+                                <div class="participant" id="game12team1"><span></span></div>
+                                <div class="participant" id="game12team2"><span></span></div>
+                            </div>
+                        </div>
+                        <div class="matchup">
+                            <div class="participants">
+                                <div class="participant" id="game13team1"><span></span></div>
+                                <div class="participant" id="game13team2"><span></span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="connector">
+                        <div class="merger"></div>
+                        <div class="line"></div>
+                    </div>
+                </div>
+            </section>
+            <section class="round semifinals">
+                <div class="winners">
+                    <div class="matchups">
+                        <div class="matchup">
+                            <div class="participants">
+                                <div class="participant" id="game16team1"><span></span></div>
+                                <div class="participant" id="game16team2"><span></span></div>
+                            </div>
+                        </div>
+                        <div class="matchup">
+                            <div class="participants">
+                                <div class="participant" id="game17team1"><span></span></div>
+                                <div class="participant" id="game17team2"><span></span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="connector">
+                        <div class="merger"></div>
+                        <div class="line"></div>
+                    </div>
+                </div>
+            </section>
+            <section class="round finals">
+                <div class="winners">
+                    <div class="matchups">
+                        <div class="matchup">
+                            <div class="participants">
+                                <div class="participant" id="game18team1"><span></span></div>
+                                <div class="participant" id="game18team2"><span></span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="connector">
+                        <div class="merger"></div>
+                        <div class="line"></div>
+                    </div>
+                </div>
+            </section>
+            <section class="round finals">
+                <div class="winners">
+                    <div class="matchups">
+                        <div class="matchup">
+                            <div class="participants">
+                                <div class="participant" id="game20team1"><span></span></div>
+                                <div class="participant" id="game20team2"><span></span></div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="connector">
-                    <div class="merger"></div>
-                    <div class="line"></div>
-                </div>
+            </section>
+            <div class="connector">
+                <div class="merger"></div>
+                <div class="line"></div>
             </div>
-            <div class="winners">
-                <div class="matchups">
-                    <div class="matchup">
-                        <div class="participants">
-                            <div class="participant" id="game2team1"><span></span></div>
-                            <div class="participant" id="game2team2"><span></span></div>
-                        </div>
-                    </div>
-                    <div class="matchup">
-                        <div class="participants">
-                            <div class="participant" id="game3team1"><span></span></div>
-                            <div class="participant" id="game3team2"><span></span></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="connector">
-                    <div class="merger"></div>
-                    <div class="line"></div>
-                </div>
-            </div>
-        </section>
-        <section class="round quarterfinals">
-            <div class="winners">
-                <div class="matchups">
-                    <div class="matchup">
-                        <div class="participants">
-                            <div class="participant" id="game8team1"><span></span></div>
-                            <div class="participant" id="game8team2"><span></span></div>
-                        </div>
-                    </div>
-                    <div class="matchup">
-                        <div class="participants">
-                            <div class="participant" id="game9team1"><span></span></div>
-                            <div class="participant" id="game9team2"><span></span></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="connector">
-                    <div class="merger"></div>
-                    <div class="line"></div>
-                </div>
-            </div>
-            <div class="winners">
-                <div class="matchups">
-                    <div class="matchup">
-                        <div class="participants">
-                            <div class="participant" id="game10team1"><span></span></div>
-                            <div class="participant" id="game10team2"><span></span></div>
-                        </div>
-                    </div>
-                    <div class="matchup">
-                        <div class="participants">
-                            <div class="participant" id="game11team1"><span></span></div>
-                            <div class="participant" id="game11team2"><span></span></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="connector">
-                    <div class="merger"></div>
-                    <div class="line"></div>
-                </div>
-            </div>
-        </section>
-        <section class="round semifinals">
-            <div class="winners">
-                <div class="matchups">
-                    <div class="matchup">
-                        <div class="participants">
-                            <div class="participant" id="game12team1"><span></span></div>
-                            <div class="participant" id="game12team2"><span></span></div>
-                        </div>
-                    </div>
-                    <div class="matchup">
-                        <div class="participants">
-                            <div class="participant" id="game13team1"><span></span></div>
-                            <div class="participant" id="game13team2"><span></span></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="connector">
-                    <div class="merger"></div>
-                    <div class="line"></div>
-                </div>
-            </div>
-        </section>
-        <section class="round semifinals">
-            <div class="winners">
-                <div class="matchups">
-                    <div class="matchup">
-                        <div class="participants">
-                            <div class="participant" id="game16team1"><span></span></div>
-                            <div class="participant" id="game16team2"><span></span></div>
-                        </div>
-                    </div>
-                    <div class="matchup">
-                        <div class="participants">
-                            <div class="participant" id="game17team1"><span></span></div>
-                            <div class="participant" id="game17team2"><span></span></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="connector">
-                    <div class="merger"></div>
-                    <div class="line"></div>
-                </div>
-            </div>
-        </section>
-        <section class="round finals">
-            <div class="winners">
-                <div class="matchups">
-                    <div class="matchup">
-                        <div class="participants">
-                            <div class="participant" id="game18team1"><span></span></div>
-                            <div class="participant" id="game18team2"><span></span></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="connector">
-                    <div class="merger"></div>
-                    <div class="line"></div>
-                </div>
-            </div>
-        </section>
-        <section class="round finals">
-            <div class="winners">
-                <div class="matchups">
-                    <div class="matchup">
-                        <div class="participants">
-                            <div class="participant" id="game20team1"><span></span></div>
-                            <div class="participant" id="game20team2"><span></span></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <div class="connector">
-            <div class="merger"></div>
-            <div class="line"></div>
         </div>
     </div>
+    <div class="grandfinals bracket" style="display: inline-block">
+        <section class="round finals" style="height: 100%">
+            <div class="winners">
+                <div class="matchups">
+                    <div class="matchup">
+                        <div class="participants">
+                            <div class="participant" id="game21team1"><span></span></div>
+                            <div class="participant" id="game21team2"><span></span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+<<<<<<< HEAD
 </div>
 <div class="grandfinals bracket" style="display: inline-block">
     <section class="round finals" style="height: 100%">
@@ -488,3 +525,6 @@ Seed:
     </section>
 </div>
 </div>
+=======
+</div>
+>>>>>>> refactor to prepare for real results
