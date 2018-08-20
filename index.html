@@ -49,19 +49,19 @@
             document.getElementById(`groupBteam${i}points`).textContent = g2Results[i].points;
         }
 
-        console.log("Group A results:");
-        console.log(g1Results.map(a => `${a.name}: ${a.points}`));
-        console.log("Group B results:");
-        console.log(g2Results.map(a => `${a.name}: ${a.points}`));
+        // console.log("Group A results:");
+        // console.log(g1Results.map(a => `${a.name}: ${a.points}`));
+        // console.log("Group B results:");
+        // console.log(g2Results.map(a => `${a.name}: ${a.points}`));
 
-        console.log(`${g1Results.slice(-1)[0].name} was eliminated`);
-        console.log(`${g2Results.slice(-1)[0].name} was eliminated`);
+        // console.log(`${g1Results.slice(-1)[0].name} was eliminated`);
+        // console.log(`${g2Results.slice(-1)[0].name} was eliminated`);
     }
 
     function runMainEvent(groupA, groupB, randomizer) {
         const mainEvent = new MainEvent(groupA, groupB, randomizer);
         const mainEventResults = mainEvent.runEvent();
-        console.log(JSON.stringify(mainEventResults));
+        //console.log(JSON.stringify(mainEventResults));
         const winnerName = determineWinner(mainEventResults.slice(-1)[0]);
         document.getElementById('winner').textContent = `${winnerName} wins TI8`;
 
@@ -96,13 +96,12 @@
         const newSeed = Math.floor(Math.random() * 100000);
         document.getElementById('seed').value = newSeed;
         printGroupResults(GROUP_A_FINAL, GROUP_B_FINAL);
-        runMainEvent(GROUP_A_FINAL, GROUP_B_FINAL, new Random(newSeed));
+        return runMainEvent(GROUP_A_FINAL, GROUP_B_FINAL, new Random(newSeed));
     }
     
-    function runMainEventWithRealGroups() {
-        const currentRandomizer = new Random(document.getElementById('seed').value);
+    function runMainEventWithRealGroups(randomizer) {
         printGroupResults(GROUP_A_FINAL, GROUP_B_FINAL);
-        runMainEvent(GROUP_A_FINAL, GROUP_B_FINAL, currentRandomizer);
+        return runMainEvent(GROUP_A_FINAL, GROUP_B_FINAL, randomizer);
     }
 
     window.onload = () => {
@@ -117,14 +116,14 @@
         document.getElementById('seed').value = seed;
         runIt(new Random(seed));
 
-
         // var winners = {};
         // for(var i=0;i<5000;i++){ 
-        //     const winner = runIt(i);
+        //     const winner = runMainEventWithRealGroups(new Random(i));
         //     winners[winner] = winners[winner] + 1 || 1 ;
         // }
 
-        // console.log(winners);
+        // console.log(Object.keys(winners).map((winner) => {
+        //     return {name: winner, wins: winners[winner]}}));
     };
 </script>
 <!--
@@ -142,7 +141,7 @@ Seed:
 <br>
 <button onclick="runIt(new Random(document.getElementById('seed').value))">Run full tournament</button>
 <button onclick="reroll()">Reroll full tournament</button>
-<button onclick="runMainEventWithRealGroups()">Run main event with real groups</button>
+<button onclick="runMainEventWithRealGroups(new Random(document.getElementById('seed').value))">Run main event with real groups</button>
 <button onclick="rerollMainEventWithRealGroups()">Reroll main event with real groups</button>
 <h1 id="winner"></h1>
 </div>
