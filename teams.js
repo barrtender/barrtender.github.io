@@ -18,7 +18,7 @@ Multiplying by 2 gives other people at least some chance
 
 const RANDOMNESS_BONUS = 2;
 
-const groupA = [
+const GROUP_A_FULL = [
     new Team("IG", 1871.13,	52.37*RANDOMNESS_BONUS),
     new Team("LGD", 2063.87, 47.05*RANDOMNESS_BONUS),
     new Team("EG",1985.56,	45.36*RANDOMNESS_BONUS),
@@ -30,7 +30,7 @@ const groupA = [
     new Team("Winstrike", 1951.62, 59.34*RANDOMNESS_BONUS),
 ];
 
-const groupB = [
+const GROUP_B_FULL = [
     new Team("paiN",1812.34, 47.48*RANDOMNESS_BONUS),
     new Team("VG", 1982.41, 48.57*RANDOMNESS_BONUS),
     new Team("Newbee",1962.86, 48.38*RANDOMNESS_BONUS),
@@ -52,6 +52,7 @@ const GROUP_A_FINAL = [
     new Team("VGJ.T",1906.27, 51.34*RANDOMNESS_BONUS),
     new Team("Mineski", 1963.11, 48.44*RANDOMNESS_BONUS),
     new Team("Winstrike", 1951.62, 59.34*RANDOMNESS_BONUS),
+    new Team("IG", 1871.13,	52.37*RANDOMNESS_BONUS),
 ];
 
 const GROUP_B_FINAL = [
@@ -64,10 +65,11 @@ const GROUP_B_FINAL = [
         // Serenity is not in datdota, but they beat IG so I'm going to take the team right above IG's stats.
     new Team("Team Serenity", 1906.27, 51.34*RANDOMNESS_BONUS), 
     new Team("VG", 1982.41, 48.57*RANDOMNESS_BONUS),
+    new Team("paiN",1812.34, 47.48*RANDOMNESS_BONUS),
 ]
 
 const TEAMS = {};
 
-for (var team of groupA.concat(groupB)) {
+for (var team of GROUP_A_FULL.concat(GROUP_B_FULL)) {
     TEAMS[team.name] = team;
 }

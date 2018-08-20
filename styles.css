@@ -10,7 +10,18 @@ html {
 
 body {
   background: #f0f2f2;
+  margin-top: 0px;
 }
+
+.groups {
+  margin-bottom: 20px;
+}
+
+.groups div {
+  display: inline-block;
+  margin-right: 50px;
+}
+
 
 .bracket {
   /* display: inline-block;

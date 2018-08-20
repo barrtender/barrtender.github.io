@@ -14,24 +14,23 @@
         return e(team1.u, team2.u, team2.t);
     }
 
-    let g1Results = [];
-    let g2Results = [];
+    let groupARemainders = [];
+    let groupBRemainders = [];
 
     let random = new Random(1);
 
     function runIt(randomizer) {
-        runGroupStages(randomizer);
-        runMainEvent(randomizer);
+        const {groupARemainders, groupBRemainders} = runGroupStages(GROUP_A_FULL, GROUP_B_FULL, randomizer);
+        runMainEvent(groupARemainders, groupBRemainders, randomizer);
     }
 
-    function runGroupStages(randomizer) {
+    function runGroupStages(groupA, groupB, randomizer) {
         const g1 = new Groups(groupA, randomizer);
         const g2 = new Groups(groupB, randomizer);
-        g1Results = g1.runGroup();
-        g2Results = g2.runGroup();
-        const groupARemainders = g1Results.map((groupResult) => TEAMS[groupResult.name]);
-        const groupBRemainders = g2Results.map((groupResult) => TEAMS[groupResult.name]);
-
+        const g1Results = g1.runGroup();
+        const g2Results = g2.runGroup();
+        groupARemainders = g1Results.map((groupResult) => TEAMS[groupResult.name]);
+        groupBRemainders = g2Results.map((groupResult) => TEAMS[groupResult.name]);
 
         printGroupResults(g1Results, g2Results);
 
@@ -59,8 +58,7 @@
         console.log(`${g2Results.slice(-1)[0].name} was eliminated`);
     }
 
-    function runMainEvent(randomizer) {
-
+    function runMainEvent(groupA, groupB, randomizer) {
         const mainEvent = new MainEvent(groupA, groupB, randomizer);
         const mainEventResults = mainEvent.runEvent();
         console.log(JSON.stringify(mainEventResults));
@@ -94,6 +92,19 @@
         runIt(new Random(document.getElementById('seed').value));
     }
 
+    function rerollMainEventWithRealGroups() {
+        const newSeed = Math.floor(Math.random() * 100000);
+        document.getElementById('seed').value = newSeed;
+        printGroupResults(GROUP_A_FINAL, GROUP_B_FINAL);
+        runMainEvent(GROUP_A_FINAL, GROUP_B_FINAL, new Random(newSeed));
+    }
+    
+    function runMainEventWithRealGroups() {
+        const currentRandomizer = new Random(document.getElementById('seed').value);
+        printGroupResults(GROUP_A_FINAL, GROUP_B_FINAL);
+        runMainEvent(GROUP_A_FINAL, GROUP_B_FINAL, currentRandomizer);
+    }
+
     window.onload = () => {
         var searchParams = new URLSearchParams(window.location.search);
         var seed = searchParams.get("seed");
@@ -125,13 +136,20 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 
+<div style="position: fixed; background: #f0f2f2; width: 100%;">
 Seed:
 <input id="seed">
-<button onclick="runIt(document.getElementById('seed').value)">Run it</button>
-<button onclick="reroll()">Reroll</button>
+<br>
+<button onclick="runIt(new Random(document.getElementById('seed').value))">Run full tournament</button>
+<button onclick="reroll()">Reroll full tournament</button>
+<button onclick="runMainEventWithRealGroups()">Run main event with real groups</button>
+<button onclick="rerollMainEventWithRealGroups()">Reroll main event with real groups</button>
 <h1 id="winner"></h1>
+</div>
+<div style="height: 100px"></div>
 
-<div>
+<div class="groups">
+    <div>
     <div>Group A</div>
     <table>
         <tbody>
@@ -187,10 +205,9 @@ Seed:
             </tr>
         </tbody>
     </table>
-    <div></div>
-
+   </div>
+<div>
     Group B
-</div>
 <table>
     <tbody>
         <tr>
@@ -245,7 +262,7 @@ Seed:
         </tr>
     </tbody>
 </table>
-</div>
+</div></div>
 
 <div style="white-space:nowrap">
     <div style="display:inline-block">
@@ -508,23 +525,5 @@ Seed:
             </div>
         </section>
     </div>
-<<<<<<< HEAD
-</div>
-<div class="grandfinals bracket" style="display: inline-block">
-    <section class="round finals" style="height: 100%">
-        <div class="winners">
-            <div class="matchups">
-                <div class="matchup">
-                    <div class="participants">
-                        <div class="participant" id="game21team1"><span></span></div>
-                        <div class="participant" id="game21team2"><span></span></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 </div>
 </div>
-=======
-</div>
->>>>>>> refactor to prepare for real results
